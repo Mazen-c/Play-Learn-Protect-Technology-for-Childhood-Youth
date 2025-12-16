@@ -20,7 +20,7 @@ Parent and educator view for monitoring progress.
 2. 📚 Curriculum-Based Learning Modules
 Interactive modules in Math, Science, Language, and Coding.
 
-Adaptive difficulty based on the child’s performance.
+Adaptive difficulty based on the child's performance.
 
 Real-time progress tracking.
 
@@ -64,12 +64,15 @@ Role	Access & Permissions
 Child	Play games, complete learning modules, access creative studio, receive safety alerts.
 Parent	Monitor child activity, view dashboards, acknowledge alerts, manage child accounts.
 Educator	Assign games, track class progress, view student achievements (no access to private alerts).
+
 🛠️ Tech Stack
 Component	Technology
 Frontend	React.js (TypeScript), Tailwind CSS, Material-UI
 Backend (Optional)	Firebase Authentication & Firestore
 Libraries	Vibe coding / low-code platforms for prototype
 Deployment	Web platform compatible with major browsers (Chrome, Safari, Firefox) and devices (desktop, tablet, mobile)
+
+
 🚀 Installation & Setup
 Prerequisites
 Node.js (v16 or higher)
@@ -77,20 +80,24 @@ Node.js (v16 or higher)
 npm or yarn
 
 Step 1: Clone the repository
-bash
+text
 git clone https://github.com/your-username/play-learn-protect.git
 Step 2: Navigate to the project folder
-bash
+text
 cd play-learn-protect
 Step 3: Install dependencies
-bash
+text
 npm install
-# or
+or
+
+text
 yarn install
 Step 4: Start the development server
-bash
+text
 npm start
-# or
+or
+
+text
 yarn start
 Step 5: Open your browser
 Visit http://localhost:3000 to use the platform.
@@ -134,4 +141,4 @@ play-learn-protect/
 ├── public/            # Static files
 ├── package.json       # Dependencies
 ├── tailwind.config.js # Tailwind configuration
-└── README.md         
+└── README.md          # This file
