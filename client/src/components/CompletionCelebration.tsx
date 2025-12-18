@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+const MotionDiv = motion.div as any;
 import { Trophy, Star, Clock, Target, ArrowRight, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -25,7 +26,7 @@ function ConfettiPiece({ delay, color }: { delay: number; color: string }) {
   const randomRotation = Math.random() * 360;
 
   return (
-    <motion.div
+    <MotionDiv
       className="absolute w-3 h-3 rounded-sm"
       style={{ backgroundColor: color, left: `${randomX}%` }}
       initial={{ y: -20, opacity: 1, rotate: 0 }}
@@ -77,7 +78,7 @@ export function CompletionCelebration({
         ))}
       </div>
 
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 25, delay: 0.2 }}
@@ -85,7 +86,7 @@ export function CompletionCelebration({
         data-testid="completion-celebration"
       >
         <Card className="p-8 text-center space-y-6 border-2 border-primary/30 shadow-2xl">
-          <motion.div
+          <MotionDiv
             initial={{ scale: 0 }}
             animate={{ scale: 1, rotate: [0, -10, 10, 0] }}
             transition={{ delay: 0.4, type: "spring", stiffness: 400 }}
@@ -95,7 +96,7 @@ export function CompletionCelebration({
             <div className="relative w-full h-full bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
               <Trophy className="w-16 h-16 text-white" />
             </div>
-            <motion.div
+            <MotionDiv
               className="absolute -top-2 -right-2"
               animate={{
                 scale: [1, 1.2, 1],
@@ -104,10 +105,10 @@ export function CompletionCelebration({
               transition={{ duration: 1, repeat: Infinity, repeatDelay: 2 }}
             >
               <Star className="w-10 h-10 text-yellow-400 fill-yellow-400" />
-            </motion.div>
-          </motion.div>
+            </MotionDiv>
+          </MotionDiv>
 
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
@@ -118,9 +119,9 @@ export function CompletionCelebration({
             </h1>
             <p className="text-2xl font-semibold text-primary">{getPerformanceMessage()}</p>
             <p className="text-muted-foreground">{summary.moduleTitle}</p>
-          </motion.div>
+          </MotionDiv>
 
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
@@ -133,9 +134,9 @@ export function CompletionCelebration({
               </span>
               <span className="text-lg text-amber-600 dark:text-amber-400">points</span>
             </div>
-          </motion.div>
+          </MotionDiv>
 
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1 }}
@@ -164,9 +165,9 @@ export function CompletionCelebration({
               <p className="text-2xl font-bold text-foreground">{accuracy}%</p>
               <p className="text-xs text-muted-foreground">Accuracy</p>
             </div>
-          </motion.div>
+          </MotionDiv>
 
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2 }}
@@ -199,9 +200,9 @@ export function CompletionCelebration({
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </MotionDiv>
         </Card>
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 }

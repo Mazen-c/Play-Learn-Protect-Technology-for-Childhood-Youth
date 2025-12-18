@@ -1,5 +1,6 @@
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
+const MotionDiv = motion.div as any;
 
 interface ProgressIndicatorProps {
   currentQuestion: number;
@@ -24,7 +25,7 @@ export function ProgressIndicator({
       </div>
       <div className="relative">
         <Progress value={progress} className="h-3" />
-        <motion.div
+        <MotionDiv
           className="absolute top-0 left-0 h-full bg-primary/20 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}

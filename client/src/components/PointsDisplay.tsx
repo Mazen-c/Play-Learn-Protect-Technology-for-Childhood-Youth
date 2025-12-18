@@ -14,12 +14,14 @@ export function PointsDisplay({ points, className = "", showAnimation = true }: 
   const [pointsDiff, setPointsDiff] = useState(0);
   const prevPointsRef = useRef(points);
 
+  const MotionDiv = motion.div as any;
+
   useEffect(() => {
     if (points !== displayedPoints && showAnimation && points > displayedPoints) {
       const diff = points - prevPointsRef.current;
       setPointsDiff(diff);
       setIsAnimating(true);
-      
+
       const steps = 20;
       const increment = (points - displayedPoints) / steps;
       let current = displayedPoints;
@@ -46,7 +48,7 @@ export function PointsDisplay({ points, className = "", showAnimation = true }: 
   }, [points, displayedPoints, showAnimation]);
 
   return (
-    <motion.div
+    <MotionDiv
       className={`flex items-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/30 rounded-full ${className}`}
       animate={isAnimating ? { scale: [1, 1.1, 1] } : {}}
       transition={{ duration: 0.3 }}
@@ -58,17 +60,17 @@ export function PointsDisplay({ points, className = "", showAnimation = true }: 
       </span>
       <AnimatePresence>
         {isAnimating && pointsDiff > 0 && (
-          <motion.span
+          <MotionDiv
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="text-sm font-bold text-green-600 dark:text-green-400"
+            className="inline-block text-sm font-bold text-green-600 dark:text-green-400"
             data-testid="text-points-increment"
           >
             +{pointsDiff}
-          </motion.span>
+          </MotionDiv>
         )}
       </AnimatePresence>
-    </motion.div>
+    </MotionDiv>
   );
 }

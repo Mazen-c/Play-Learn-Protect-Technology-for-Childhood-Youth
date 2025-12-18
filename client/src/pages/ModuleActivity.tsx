@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion, AnimatePresence } from "framer-motion";
+const MotionDiv = motion.div as any;
 import type { ModuleWithQuestions, Question, ModuleCompletionSummary, DifficultyLevel } from "@shared/schema";
 
 interface AnswerResult {
@@ -177,7 +178,7 @@ export default function ModuleActivity() {
       />
 
       <main className="container px-4 py-6 max-w-4xl mx-auto">
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6"
@@ -192,11 +193,11 @@ export default function ModuleActivity() {
             <SessionTimer isRunning={!showFeedback && !isCompleted} onTimeUpdate={handleTimeUpdate} />
             <PointsDisplay points={earnedPoints} />
           </div>
-        </motion.div>
+        </MotionDiv>
 
         <AnimatePresence mode="wait">
           {currentQuestion && (
-            <motion.div
+            <MotionDiv
               key={currentQuestion.id}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -208,19 +209,19 @@ export default function ModuleActivity() {
                 onAnswer={handleAnswer}
                 disabled={isAnswering || showFeedback}
               />
-            </motion.div>
+            </MotionDiv>
           )}
         </AnimatePresence>
 
         {!currentQuestion && questions.length === 0 && (
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-16"
           >
             <h3 className="text-xl font-semibold text-foreground mb-2">No questions available</h3>
             <p className="text-muted-foreground">This module doesn't have any questions yet.</p>
-          </motion.div>
+          </MotionDiv>
         )}
       </main>
 

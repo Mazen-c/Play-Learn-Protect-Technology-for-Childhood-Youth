@@ -1,4 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
+const MotionDiv = motion.div as any;
+const MotionH2 = motion.h2 as any;
+const MotionP = motion.p as any;
 import { CheckCircle2, XCircle, Sparkles } from "lucide-react";
 
 interface FeedbackAnimationProps {
@@ -21,7 +24,7 @@ export function FeedbackAnimation({
 
   return (
     <AnimatePresence>
-      <motion.div
+      <MotionDiv
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
@@ -31,20 +34,19 @@ export function FeedbackAnimation({
         data-testid="feedback-animation"
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === "Enter" && onComplete?.()}
+        onKeyDown={(e: any) => e.key === "Enter" && onComplete?.()}
       >
-        <motion.div
+        <MotionDiv
           initial={{ y: 20 }}
           animate={{ y: 0 }}
-          className={`relative p-8 rounded-3xl shadow-2xl max-w-md mx-4 text-center ${
-            isCorrect
-              ? "bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700"
-              : "bg-gradient-to-br from-red-500 to-rose-600 dark:from-red-600 dark:to-rose-700"
-          }`}
+          className={`relative p-8 rounded-3xl shadow-2xl max-w-md mx-4 text-center ${isCorrect
+            ? "bg-gradient-to-br from-green-500 to-emerald-600 dark:from-green-600 dark:to-emerald-700"
+            : "bg-gradient-to-br from-red-500 to-rose-600 dark:from-red-600 dark:to-rose-700"
+            }`}
           data-testid={`feedback-result-${isCorrect ? "correct" : "incorrect"}`}
         >
           {isCorrect && (
-            <motion.div
+            <MotionDiv
               className="absolute -top-4 -right-4"
               animate={{
                 rotate: [0, 15, -15, 0],
@@ -53,10 +55,10 @@ export function FeedbackAnimation({
               transition={{ duration: 0.5, repeat: 2 }}
             >
               <Sparkles className="w-12 h-12 text-yellow-300" />
-            </motion.div>
+            </MotionDiv>
           )}
 
-          <motion.div
+          <MotionDiv
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
@@ -64,45 +66,45 @@ export function FeedbackAnimation({
             {isCorrect ? (
               <CheckCircle2 className="w-20 h-20 mx-auto text-white mb-4" />
             ) : (
-              <motion.div
+              <MotionDiv
                 animate={{ x: [-5, 5, -5, 5, 0] }}
                 transition={{ duration: 0.4 }}
               >
                 <XCircle className="w-20 h-20 mx-auto text-white mb-4" />
-              </motion.div>
+              </MotionDiv>
             )}
-          </motion.div>
+          </MotionDiv>
 
-          <motion.h2
+          <MotionH2
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="text-3xl font-bold text-white mb-2"
           >
             {displayMessage}
-          </motion.h2>
+          </MotionH2>
 
           {explanation && !isCorrect && (
-            <motion.p
+            <MotionP
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
               className="text-white/90 text-lg mt-4"
             >
               {explanation}
-            </motion.p>
+            </MotionP>
           )}
 
-          <motion.p
+          <MotionP
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
             className="text-white/70 text-sm mt-4"
           >
             Tap anywhere to continue
-          </motion.p>
-        </motion.div>
-      </motion.div>
+          </MotionP>
+        </MotionDiv>
+      </MotionDiv>
     </AnimatePresence>
   );
 }

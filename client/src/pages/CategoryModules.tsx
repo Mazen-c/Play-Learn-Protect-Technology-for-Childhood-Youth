@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+const MotionDiv = motion.div as any;
 import { Calculator, Beaker, BookOpen, Code, Users } from "lucide-react";
 import type { CategoryWithModules, CategoryType, AgeGroup } from "@shared/schema";
 import { useState } from "react";
@@ -106,7 +107,7 @@ export default function CategoryModules() {
       />
 
       <main className="container px-4 py-8 max-w-5xl mx-auto">
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 mb-8"
@@ -128,9 +129,9 @@ export default function CategoryModules() {
               <Badge variant="secondary">{category.modules?.length || 0} Modules</Badge>
             </div>
           </div>
-        </motion.div>
+        </MotionDiv>
 
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -158,10 +159,10 @@ export default function CategoryModules() {
               {age} yrs
             </Button>
           ))}
-        </motion.div>
+        </MotionDiv>
 
         {filteredModules && filteredModules.length > 0 ? (
-          <motion.div
+          <MotionDiv
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -169,17 +170,17 @@ export default function CategoryModules() {
             data-testid="modules-grid"
           >
             {filteredModules.map((module) => (
-              <motion.div key={module.id} variants={itemVariants}>
+              <MotionDiv key={module.id} variants={itemVariants}>
                 <ModuleCard
                   module={module}
                   progress={progress?.[module.id]?.progress || 0}
                   isCompleted={progress?.[module.id]?.isCompleted || false}
                 />
-              </motion.div>
+              </MotionDiv>
             ))}
-          </motion.div>
+          </MotionDiv>
         ) : (
-          <motion.div
+          <MotionDiv
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="text-center py-16"
@@ -195,7 +196,7 @@ export default function CategoryModules() {
                 ? `No modules found for ages ${selectedAge}. Try a different age group.`
                 : "Check back soon for new learning content!"}
             </p>
-          </motion.div>
+          </MotionDiv>
         )}
       </main>
     </div>

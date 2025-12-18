@@ -3,6 +3,7 @@ import { CategoryCard } from "@/components/CategoryCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+const MotionDiv = motion.div as any;
 import type { Category } from "@shared/schema";
 
 export default function ModulesListing() {
@@ -38,7 +39,7 @@ export default function ModulesListing() {
       />
 
       <main className="container px-4 py-8 max-w-6xl mx-auto">
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-12"
@@ -49,7 +50,7 @@ export default function ModulesListing() {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto" data-testid="text-page-description">
             Choose a category and start your learning adventure! Complete activities to earn points and unlock new challenges.
           </p>
-        </motion.div>
+        </MotionDiv>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -69,7 +70,7 @@ export default function ModulesListing() {
             ))}
           </div>
         ) : (
-          <motion.div
+          <MotionDiv
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -77,7 +78,7 @@ export default function ModulesListing() {
             data-testid="categories-grid"
           >
             {categories?.map((category) => (
-              <motion.div key={category.id} variants={itemVariants}>
+              <MotionDiv key={category.id} variants={itemVariants}>
                 <CategoryCard
                   id={category.id}
                   name={category.name}
@@ -86,12 +87,12 @@ export default function ModulesListing() {
                   moduleCount={category.moduleCount || 0}
                   colorClass={category.colorClass}
                 />
-              </motion.div>
+              </MotionDiv>
             ))}
-          </motion.div>
+          </MotionDiv>
         )}
 
-        <motion.div
+        <MotionDiv
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
@@ -102,7 +103,7 @@ export default function ModulesListing() {
               For children ages 3-12 years
             </span>
           </div>
-        </motion.div>
+        </MotionDiv>
       </main>
     </div>
   );

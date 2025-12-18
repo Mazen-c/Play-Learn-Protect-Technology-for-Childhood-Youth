@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+const MotionDiv = motion.div as any;
 import type { Question, QuestionType } from "@shared/schema";
 
 interface QuestionCardProps {
@@ -39,16 +40,15 @@ export function QuestionCard({ question, onAnswer, disabled = false }: QuestionC
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {options.map((option, index) => (
-          <motion.div
+          <MotionDiv
             key={index}
             whileHover={{ scale: disabled ? 1 : 1.02 }}
             whileTap={{ scale: disabled ? 1 : 0.98 }}
           >
             <Button
               variant={selectedAnswer === option ? "default" : "outline"}
-              className={`w-full min-h-16 text-lg font-medium whitespace-normal text-left justify-start px-6 ${
-                selectedAnswer === option ? "ring-2 ring-primary" : ""
-              }`}
+              className={`w-full min-h-16 text-lg font-medium whitespace-normal text-left justify-start px-6 ${selectedAnswer === option ? "ring-2 ring-primary" : ""
+                }`}
               onClick={() => handleSubmit(option)}
               disabled={disabled}
               data-testid={`button-option-${index}`}
@@ -58,7 +58,7 @@ export function QuestionCard({ question, onAnswer, disabled = false }: QuestionC
               </span>
               {option}
             </Button>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     );
@@ -68,7 +68,7 @@ export function QuestionCard({ question, onAnswer, disabled = false }: QuestionC
     return (
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         {["True", "False"].map((option) => (
-          <motion.div
+          <MotionDiv
             key={option}
             whileHover={{ scale: disabled ? 1 : 1.02 }}
             whileTap={{ scale: disabled ? 1 : 0.98 }}
@@ -76,18 +76,17 @@ export function QuestionCard({ question, onAnswer, disabled = false }: QuestionC
           >
             <Button
               variant={selectedAnswer === option ? "default" : "outline"}
-              className={`w-full min-h-20 text-xl font-bold ${
-                option === "True"
+              className={`w-full min-h-20 text-xl font-bold ${option === "True"
                   ? "border-green-400 dark:border-green-600"
                   : "border-red-400 dark:border-red-600"
-              } ${selectedAnswer === option ? "ring-2 ring-primary" : ""}`}
+                } ${selectedAnswer === option ? "ring-2 ring-primary" : ""}`}
               onClick={() => handleSubmit(option)}
               disabled={disabled}
               data-testid={`button-${option.toLowerCase()}`}
             >
               {option}
             </Button>
-          </motion.div>
+          </MotionDiv>
         ))}
       </div>
     );
@@ -129,8 +128,8 @@ export function QuestionCard({ question, onAnswer, disabled = false }: QuestionC
             {question.type === "true_false"
               ? "True or False"
               : question.type === "fill_blank"
-              ? "Fill in the Blank"
-              : "Choose the correct answer"}
+                ? "Fill in the Blank"
+                : "Choose the correct answer"}
           </p>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
             {question.questionText}

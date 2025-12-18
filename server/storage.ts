@@ -435,7 +435,7 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
-    const user: User = { ...insertUser, id, totalPoints: 0 };
+    const user: User = { ...insertUser, id, totalPoints: 0 } as User;
     this.users.set(id, user);
     return user;
   }
@@ -472,7 +472,7 @@ export class MemStorage implements IStorage {
 
   async createCategory(insertCategory: InsertCategory): Promise<Category> {
     const id = randomUUID();
-    const category: Category = { ...insertCategory, id };
+    const category: Category = { ...insertCategory, id } as Category;
     this.categories.set(id, category);
     return category;
   }
@@ -502,7 +502,7 @@ export class MemStorage implements IStorage {
 
   async createModule(insertModule: InsertModule): Promise<Module> {
     const id = randomUUID();
-    const module: Module = { ...insertModule, id };
+    const module: Module = { ...insertModule, id } as Module;
     this.modules.set(id, module);
     return module;
   }
@@ -531,14 +531,14 @@ export class MemStorage implements IStorage {
 
   async createQuestion(insertQuestion: InsertQuestion): Promise<Question> {
     const id = randomUUID();
-    const question: Question = { ...insertQuestion, id };
+    const question: Question = { ...insertQuestion, id } as Question;
     this.questions.set(id, question);
     return question;
   }
 
   async getUserProgress(userId: string): Promise<Record<string, { progress: number; isCompleted: boolean }>> {
     const result: Record<string, { progress: number; isCompleted: boolean }> = {};
-    
+
     Array.from(this.userProgress.values())
       .filter((p) => p.odulused === (userId || this.defaultUserId))
       .forEach((p) => {
@@ -547,7 +547,7 @@ export class MemStorage implements IStorage {
         const progress = Math.round(((p.questionsCompleted || 0) / totalQuestions) * 100);
         result[p.moduleId] = { progress, isCompleted: p.isCompleted || false };
       });
-    
+
     return result;
   }
 
@@ -559,9 +559,9 @@ export class MemStorage implements IStorage {
   async updateModuleProgress(userId: string, moduleId: string, data: Partial<UserProgress>): Promise<UserProgress> {
     const key = `${userId || this.defaultUserId}-${moduleId}`;
     const existing = this.userProgress.get(key);
-    
+
     if (existing) {
-      const updated: UserProgress = { 
+      const updated: UserProgress = {
         ...existing,
         questionsCompleted: data.questionsCompleted ?? existing.questionsCompleted,
         correctAnswers: data.correctAnswers ?? existing.correctAnswers,
@@ -574,7 +574,7 @@ export class MemStorage implements IStorage {
       this.userProgress.set(key, updated);
       return updated;
     }
-    
+
     const newProgress: UserProgress = {
       id: randomUUID(),
       odulused: userId || this.defaultUserId,
@@ -586,15 +586,15 @@ export class MemStorage implements IStorage {
       isCompleted: data.isCompleted || false,
       currentDifficulty: data.currentDifficulty || "easy",
       timeSpentSeconds: data.timeSpentSeconds || 0,
-    };
-    
+    } as UserProgress;
+
     this.userProgress.set(key, newProgress);
     return newProgress;
   }
 
   async createSession(insertSession: InsertSession): Promise<Session> {
     const id = randomUUID();
-    const session: Session = { ...insertSession, id };
+    const session: Session = { ...insertSession, id } as Session;
     this.sessions.set(id, session);
     return session;
   }
