@@ -1,6 +1,8 @@
 import React from "react";
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Button, Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 import ProgressCard from "./ProgressCard";
 import PointsCard from "./PointsCard";
@@ -13,12 +15,24 @@ import { useGame } from "../Context/Context";
 
 const Dashboard = () => {
   const { currentNotification, clearNotification, classLeaderboardPosition, leaderboardPosition } = useGame();
+  const auth = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    auth.logout();
+    navigate("/login");
+  };
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: "bold", mb: 4, textAlign: "center" }}>
-        Your Dashboard
-      </Typography>
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 4 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Your Dashboard
+        </Typography>
+        <Button color="secondary" variant="outlined" onClick={handleLogout}>
+          Log out
+        </Button>
+      </Box>
 
       <NotificationToast notification={currentNotification} onClose={clearNotification} />
 
