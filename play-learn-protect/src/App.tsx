@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/NavBar";
-import Dashboard from "./Components/DashBoard";
+import Dashboard from "./Components/DashBoard/DashBoard";
 import Game from "./Pages/Game";
 import TeacherDashboard from "./Pages/TeacherDashboard";
 import TeacherClassManagement from "./Pages/TeacherClassManagement";

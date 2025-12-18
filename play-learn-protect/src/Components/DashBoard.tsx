@@ -6,6 +6,7 @@ import ProgressBar from "./ProgressBar";
 import AchievementCard from "./AchievementCard";
 import Leaderboard from "./LeaderBoard";
 
+
 const Dashboard: React.FC = () => {
   return (
     <Box p={2}>
