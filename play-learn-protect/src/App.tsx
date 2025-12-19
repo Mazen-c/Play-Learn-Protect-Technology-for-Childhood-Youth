@@ -23,6 +23,10 @@ import CompletionCelebration from "./Pages/Child/CompletionCelebration";
 import { useAuth } from "./Components/Context/AuthContext";
 import { useTheme } from "./Components/Context/ThemeContext";
 import ResetPassword from "./Pages/ResetPassword";
+
+import ErrorPage from "./Pages/Shared/ErrorPage";
+import OfflinePage from "./Pages/Shared/OfflinePage";
+import TutorialsPage from "./Pages/Shared/TutorialsPage";
 import "./i8ln/i8ln";
 
 const App: React.FC = () => {
@@ -57,6 +61,10 @@ const App: React.FC = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/offline" element={<OfflinePage />} />
+          <Route path="/tutorials" element={<TutorialsPage />} />
+          <Route path="/unauthorized" element={<ErrorPage type="403" />} />
+          <Route path="*" element={<ErrorPage type="404" />} />
 
           <Route
             path="/"
