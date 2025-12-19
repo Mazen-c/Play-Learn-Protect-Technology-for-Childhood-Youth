@@ -6,13 +6,11 @@ import { useAuth } from "./Context/AuthContext";
 import { useTheme } from "./Context/ThemeContext";
 
 const Navbar: React.FC = () => {
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
   const auth = useAuth();
   const { isDark, toggleDarkMode } = useTheme();
 
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language === "en" ? "ar" : "en");
-  };
+
 
   const isEducator = auth.user && ((auth.user.role as string) === "educator" || (auth.user.role as string) === "teacher");
   const isParent = auth.user?.role === "parent";
@@ -33,6 +31,19 @@ const Navbar: React.FC = () => {
           }}
         >
           {t("home") as string}
+        </Button>
+        <Button
+          color="inherit"
+          component={Link}
+          to="/tutorials"
+          sx={{
+            fontWeight: 600,
+            borderRadius: 2,
+            px: 2,
+            "&:hover": { bgcolor: "rgba(255,255,255,0.1)" }
+          }}
+        >
+          Tutorials
         </Button>
         {isChild && (
           <>
@@ -154,19 +165,7 @@ const Navbar: React.FC = () => {
         >
           {isDark ? "☀️" : "🌙"}
         </Button>
-        <Button
-          color="inherit"
-          onClick={toggleLanguage}
-          sx={{
-            borderRadius: 2,
-            fontWeight: 600,
-            minWidth: 48,
-            bgcolor: "rgba(255,255,255,0.1)",
-            "&:hover": { bgcolor: "rgba(255,255,255,0.2)" }
-          }}
-        >
-          {i18n.language === "en" ? "AR" : "EN"}
-        </Button>
+
         <Button
           color="inherit"
           onClick={() => auth.logout()}
