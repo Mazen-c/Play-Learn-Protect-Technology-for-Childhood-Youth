@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Components/Context/AuthContext";
+import { useAlerts } from "../../Components/Alerts/AlertsContext";
 
 interface Assignment {
   id: number;
@@ -13,6 +14,7 @@ interface Assignment {
 
 const ChildAssignments: React.FC = () => {
   const auth = useAuth();
+  const { triggerAlert } = useAlerts();
   const [assignments, setAssignments] = useState<Assignment[]>([]);
 
   useEffect(() => {
@@ -28,6 +30,18 @@ const ChildAssignments: React.FC = () => {
     }));
     setAssignments(mapped);
   }, [auth]);
+
+  useEffect(() => {
+    const key = "plp_child_assignments_minor_alert_shown";
+    if (!sessionStorage.getItem(key)) {
+      triggerAlert({
+        severity: "minor",
+        title: "Safety Tip",
+        message: "Be respectful in submissions and never include personal info.",
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [triggerAlert]);
 
   const getStatusColor = (status: string) => {
     switch (status) {

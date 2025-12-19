@@ -1,6 +1,7 @@
 import StatCard from "../../Components/parent/StatCard";
 import { useAuth } from "../../Components/Context/AuthContext";
 import { useState, useEffect } from "react";
+import { useAlerts } from "../../Components/Alerts/AlertsContext";
 
 interface ChildActivity {
   name: string;
@@ -15,6 +16,7 @@ interface ChildActivity {
 
 const ParentDashboard: React.FC = () => {
   const auth = useAuth();
+  const { triggerAlert } = useAlerts();
   const isChild = auth.user?.role === "child";
   const childName = isChild ? auth.user?.email?.split("_")[0].replace(/([A-Z])/g, " $1").trim() : "";
   const [selectedChild, setSelectedChild] = useState<ChildActivity | null>(null);
@@ -49,6 +51,19 @@ const ParentDashboard: React.FC = () => {
       }
     }
   }, [auth]);
+
+  useEffect(() => {
+    if (auth.user?.role !== "parent") return;
+    const key = "plp_parent_dashboard_minor_tip_shown";
+    if (!sessionStorage.getItem(key)) {
+      triggerAlert({
+        severity: "minor",
+        title: "Parent Tip",
+        message: "Review projects together and remind kids not to share personal info.",
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [auth.user?.role, triggerAlert]);
 
   if (isChild) {
     return (

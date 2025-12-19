@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Components/Context/AuthContext";
+import { useAlerts } from "../../Components/Alerts/AlertsContext";
 
 interface Challenge {
   id: number;
@@ -15,6 +16,7 @@ interface Challenge {
 
 const ChildChallenges: React.FC = () => {
   const auth = useAuth();
+  const { triggerAlert } = useAlerts();
   const [activeChallenges, setActiveChallenges] = useState<Challenge[]>([]);
   const [completedChallenges, setCompletedChallenges] = useState<Challenge[]>([]);
 
@@ -34,6 +36,19 @@ const ChildChallenges: React.FC = () => {
     setActiveChallenges(mapped.filter(m => m.isActive));
     setCompletedChallenges(mapped.filter(m => !m.isActive));
   }, [auth]);
+
+  // Show a gentle safety reminder once per session
+  useEffect(() => {
+    const key = "plp_child_challenges_minor_alert_shown";
+    if (!sessionStorage.getItem(key)) {
+      triggerAlert({
+        severity: "minor",
+        title: "Safety Tip",
+        message: "Remember: Never share personal info in challenge chats.",
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [triggerAlert]);
 
   const ChallengeCard = ({ challenge }: { challenge: Challenge }) => (
     <div className="rounded-xl bg-white dark:bg-slate-800 p-6 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">

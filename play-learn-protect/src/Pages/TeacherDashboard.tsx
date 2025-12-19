@@ -1,23 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../Components/Context/AuthContext";
 import ProgressBar from "../Components/ProgressBar";
-import Leaderboard, {
-  LeaderboardEntry,
-} from "../Components/LeaderBoard";
+import { useAlerts } from "../Components/Alerts/AlertsContext";
 
 const classStats = [
   { name: "Grade 5 - A", students: 24, completion: 82 },
   { name: "Grade 6 - B", students: 22, completion: 74 },
 ];
 
-const activeChallenges: LeaderboardEntry[] = [
-  { name: "Password Ninja", points: 980 },
-  { name: "Phishing Hunter", points: 940 },
-  { name: "Safety Sprint", points: 910 },
-];
+// Note: Leaderboard display removed from this page for now
 
 const TeacherDashboard: React.FC = () => {
   const auth = useAuth();
+  const { triggerAlert } = useAlerts();
   const [modules, setModules] = useState<any[]>([]);
   const [challenges, setChallenges] = useState<any[]>([]);
 
@@ -31,6 +26,19 @@ const TeacherDashboard: React.FC = () => {
     setModules(auth.getModules());
     setChallenges(auth.getChallenges());
   }, [auth]);
+
+  useEffect(() => {
+    if (auth.user?.role !== "educator") return;
+    const key = "plp_teacher_dashboard_minor_tip_shown";
+    if (!sessionStorage.getItem(key)) {
+      triggerAlert({
+        severity: "minor",
+        title: "Teacher Tip",
+        message: "Remind students: no personal details in assignments or challenges.",
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [auth.user?.role, triggerAlert]);
 
   const handleAddModule = () => {
     if (!moduleTitle.trim()) return;
