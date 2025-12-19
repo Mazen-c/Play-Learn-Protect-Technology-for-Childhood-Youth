@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Typography, Button, Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useAuth } from "../Context/AuthContext";
@@ -12,12 +12,14 @@ import LeaderboardPositionCard from "./LeaderboardPositionCard";
 import Leaderboard from "../LeadBoard/Leaderboard";
 import NotificationToast from "./NotificationToast";
 import { useGame } from "../Context/Context";
+import { useAlerts } from "../Alerts/AlertsContext";
 
 const Dashboard = () => {
   const { currentNotification, clearNotification, classLeaderboardPosition, leaderboardPosition } = useGame();
   const auth = useAuth();
   const navigate = useNavigate();
   const isChild = auth.user?.role === "child";
+  const { triggerAlert } = useAlerts();
 
   const handleLogout = () => {
     if (isChild) {
@@ -27,6 +29,19 @@ const Dashboard = () => {
       navigate("/login");
     }
   };
+
+  useEffect(() => {
+    if (!isChild) return;
+    const key = "plp_dashboard_child_tip_shown";
+    if (!sessionStorage.getItem(key)) {
+      triggerAlert({
+        severity: "minor",
+        title: "Safety Tip",
+        message: "Think before you post. Keep private info private.",
+      });
+      sessionStorage.setItem(key, "1");
+    }
+  }, [isChild, triggerAlert]);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

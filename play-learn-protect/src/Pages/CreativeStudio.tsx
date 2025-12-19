@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../Components/Context/AuthContext';
 import { useProjects } from '../Components/Context/ProjectsContext';
+import { useAlerts } from '../Components/Alerts/AlertsContext';
 
 // --- Inline SVG Icons to replace phosphor-react ---
 // These are simplified SVG equivalents to avoid adding new dependencies.
@@ -203,6 +204,7 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
     const { saveProject } = useProjects();
     const { user } = useAuth();
     const navigate = useNavigate();
+    const { triggerAlert } = useAlerts();
 
     // Mock handling for sharing
     const handleShare = (teacher: Teacher) => {
@@ -331,7 +333,24 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
                         <FloppyDisk size={20} /> Save
                     </button>
                     <button
-                        onClick={() => setShowShareModal(true)}
+                        onClick={() => {
+                            // Gate sharing behind a serious alert acknowledgment
+                            const key = "plp_creative_share_privacy_ack";
+                            const alreadyAcked = sessionStorage.getItem(key) === "1";
+                            if (alreadyAcked) {
+                                setShowShareModal(true);
+                            } else {
+                                triggerAlert({
+                                    severity: "serious",
+                                    title: "Before you share",
+                                    message: "Make sure your project doesn't include names, addresses, or other personal info.",
+                                    onAcknowledge: () => {
+                                        sessionStorage.setItem(key, "1");
+                                        setShowShareModal(true);
+                                    },
+                                });
+                            }
+                        }}
                         className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-full font-bold shadow-sm hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-500 transition"
                     >
                         <ShareNetwork size={20} /> Share
@@ -398,6 +417,7 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
 const CreativeStudio = () => {
     const [view, setView] = useState<'list' | 'studio'>('list'); // 'list' or 'studio'
     const [currentProject, setCurrentProject] = useState<Project | null>(null);
+    const { triggerAlert } = useAlerts();
     const { user } = useAuth();
     const { getUserProjects, deleteProject } = useProjects();
 
@@ -423,6 +443,19 @@ const CreativeStudio = () => {
             deleteProject(projectId);
         }
     };
+
+    useEffect(() => {
+        if (view !== 'studio') return;
+        const key = 'plp_creative_studio_minor_tip_shown';
+        if (!sessionStorage.getItem(key)) {
+            triggerAlert({
+                severity: 'minor',
+                title: 'Sharing Reminder',
+                message: "Ask an adult before sharing your project with others.",
+            });
+            sessionStorage.setItem(key, '1');
+        }
+    }, [view, triggerAlert]);
 
     return (
         <div className="min-h-screen font-sans bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-slate-100">

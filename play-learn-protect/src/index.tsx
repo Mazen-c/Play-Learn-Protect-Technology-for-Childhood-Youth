@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import { GameProvider } from './Components/Context/Context';
 import { AuthProvider } from './Components/Context/AuthContext';
 import { ThemeProvider } from './Components/Context/ThemeContext';
+import { AlertsProvider } from './Components/Alerts/AlertsContext';
+import AlertsRoot from './Components/Alerts/AlertsRoot';
 import { ProjectsProvider } from './Components/Context/ProjectsContext';
 
 const root = ReactDOM.createRoot(
@@ -16,9 +18,12 @@ root.render(
     <AuthProvider>
       <ThemeProvider>
         <ProjectsProvider>
-          <GameProvider>
-            <App />
-          </GameProvider>
+          <AlertsProvider>
+            <GameProvider>
+              <App />
+              <AlertsRoot />
+            </GameProvider>
+          </AlertsProvider>
         </ProjectsProvider>
       </ThemeProvider>
     </AuthProvider>
