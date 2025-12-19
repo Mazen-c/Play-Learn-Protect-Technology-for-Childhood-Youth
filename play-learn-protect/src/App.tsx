@@ -17,6 +17,9 @@ import ManageChildren from "./Pages/Parent/ManageChildren";
 import ParentDashboard from "./Pages/Parent/ParentDashboard";
 import ChildAssignments from "./Pages/Child/ChildAssignments";
 import ChildChallenges from "./Pages/Child/ChildChallenges";
+import CategoryModules from "./Pages/Child/CategoryModules";
+import ModuleActivity from "./Pages/Child/ModuleActivity";
+import CompletionCelebration from "./Pages/Child/CompletionCelebration";
 import { useAuth } from "./Components/Context/AuthContext";
 import { useTheme } from "./Components/Context/ThemeContext";
 import ResetPassword from "./Pages/ResetPassword";
@@ -50,123 +53,147 @@ const App: React.FC = () => {
       <Router>
         {auth.user && <Navbar />}
         <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              {auth.user?.role === "child" ? (
-                <Dashboard />
-              ) : (auth.user?.role === "educator" || (auth.user as any)?.role === "teacher") ? (
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                {auth.user?.role === "child" ? (
+                  <Dashboard />
+                ) : (auth.user?.role === "educator" || (auth.user as any)?.role === "teacher") ? (
+                  <TeacherDashboard />
+                ) : (
+                  <ParentDashboard />
+                )}
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/game"
+            element={
+              <NonEducatorRoute>
+                <Game />
+              </NonEducatorRoute>
+            }
+          />
+          <Route
+            path="/creative-studio"
+            element={
+              <ProtectedRoute>
+                <CreativeStudio />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/teacher/dashboard"
+            element={
+              <EducatorOnlyRoute>
                 <TeacherDashboard />
-              ) : (
-                <ParentDashboard />
-              )}
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/game"
-          element={
-            <NonEducatorRoute>
-              <Game />
-            </NonEducatorRoute>
-          }
-        />
-        <Route
-          path="/creative-studio"
-          element={
-            <ProtectedRoute>
-              <CreativeStudio />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/teacher/dashboard"
-          element={
-            <EducatorOnlyRoute>
-              <TeacherDashboard />
-            </EducatorOnlyRoute>
-          }
-        />
-        <Route
-          path="/teacher/classes"
-          element={
-            <EducatorOnlyRoute>
-              <TeacherClassManagement />
-            </EducatorOnlyRoute>
-          }
-        />
-        <Route
-          path="/teacher/assignments"
-          element={
-            <EducatorOnlyRoute>
-              <TeacherAssignments />
-            </EducatorOnlyRoute>
-          }
-        />
-        <Route
-          path="/teacher/challenges"
-          element={
-            <EducatorOnlyRoute>
-              <TeacherChallenges />
-            </EducatorOnlyRoute>
-          }
-        />
-        <Route
-          path="/teacher/students/:id"
-          element={
-            <EducatorOnlyRoute>
-              <TeacherStudentDetail />
-            </EducatorOnlyRoute>
-          }
-        />
-        <Route
-          path="/child/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/parent/classes"
-          element={
-            <ProtectedRoute>
-              <ParentClasses />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/parent/manage-children"
-          element={
-            <ProtectedRoute>
-              <ManageChildren />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/child/assignments"
-          element={
-            <ProtectedRoute>
-              <ChildAssignments />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/child/challenges"
-          element={
-            <ProtectedRoute>
-              <ChildChallenges />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+              </EducatorOnlyRoute>
+            }
+          />
+          <Route
+            path="/teacher/classes"
+            element={
+              <EducatorOnlyRoute>
+                <TeacherClassManagement />
+              </EducatorOnlyRoute>
+            }
+          />
+          <Route
+            path="/teacher/assignments"
+            element={
+              <EducatorOnlyRoute>
+                <TeacherAssignments />
+              </EducatorOnlyRoute>
+            }
+          />
+          <Route
+            path="/teacher/challenges"
+            element={
+              <EducatorOnlyRoute>
+                <TeacherChallenges />
+              </EducatorOnlyRoute>
+            }
+          />
+          <Route
+            path="/teacher/students/:id"
+            element={
+              <EducatorOnlyRoute>
+                <TeacherStudentDetail />
+              </EducatorOnlyRoute>
+            }
+          />
+          <Route
+            path="/child/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/parent/classes"
+            element={
+              <ProtectedRoute>
+                <ParentClasses />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/parent/manage-children"
+            element={
+              <ProtectedRoute>
+                <ManageChildren />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/child/assignments"
+            element={
+              <ProtectedRoute>
+                <ChildAssignments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/child/challenges"
+            element={
+              <ProtectedRoute>
+                <ChildChallenges />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/child/modules"
+            element={
+              <ProtectedRoute>
+                <CategoryModules />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/child/modules/:category/:moduleId"
+            element={
+              <ProtectedRoute>
+                <ModuleActivity />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/child/modules/:category/:moduleId/complete"
+            element={
+              <ProtectedRoute>
+                <CompletionCelebration />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
     </div>
   );
 };
