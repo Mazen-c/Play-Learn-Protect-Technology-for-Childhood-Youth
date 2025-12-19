@@ -28,7 +28,48 @@ const ChildAssignments: React.FC = () => {
       progress: 0,
       description: m.description,
     }));
-    setAssignments(mapped);
+
+    // Add sample assignments if no teacher modules exist
+    const sampleAssignments: Assignment[] = [
+      {
+        id: 1001,
+        title: "Complete Math Quiz",
+        subject: "Mathematics",
+        dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 3).toISOString(),
+        status: "pending",
+        progress: 45,
+        description: "Complete all counting and addition exercises"
+      },
+      {
+        id: 1002,
+        title: "Science Project: Solar System",
+        subject: "Science",
+        dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 5).toISOString(),
+        status: "submitted",
+        progress: 100,
+        description: "Create a model of the solar system"
+      },
+      {
+        id: 1003,
+        title: "Reading Comprehension",
+        subject: "Language Arts",
+        dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2).toISOString(),
+        status: "completed",
+        progress: 100,
+        description: "Read the story and answer questions"
+      },
+      {
+        id: 1004,
+        title: "Coding Challenge: Loops",
+        subject: "Computer Science",
+        dueDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 10).toISOString(),
+        status: "pending",
+        progress: 20,
+        description: "Practice loop exercises in the coding playground"
+      }
+    ];
+
+    setAssignments(mapped.length > 0 ? mapped : sampleAssignments);
   }, [auth]);
 
   useEffect(() => {

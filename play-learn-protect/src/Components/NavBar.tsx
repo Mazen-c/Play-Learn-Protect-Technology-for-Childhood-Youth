@@ -21,11 +21,11 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="static" color="primary" sx={{ boxShadow: 2 }}>
       <Toolbar sx={{ gap: 0.5, px: { xs: 1, sm: 2 } }}>
-        <Button 
-          color="inherit" 
-          component={Link} 
+        <Button
+          color="inherit"
+          component={Link}
           to="/"
-          sx={{ 
+          sx={{
             fontWeight: 600,
             borderRadius: 2,
             px: 2,
@@ -36,33 +36,41 @@ const Navbar: React.FC = () => {
         </Button>
         {isChild && (
           <>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/game"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               {t("game") as string}
             </Button>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/creative-studio"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               Creative Studio
             </Button>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/child/assignments"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               Assignments
             </Button>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
+              to="/child/modules"
+              sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
+            >
+              Modules
+            </Button>
+            <Button
+              color="inherit"
+              component={Link}
               to="/child/challenges"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
@@ -71,9 +79,9 @@ const Navbar: React.FC = () => {
           </>
         )}
         {isParent && (
-          <Button 
-            color="inherit" 
-            component={Link} 
+          <Button
+            color="inherit"
+            component={Link}
             to="/parent/classes"
             sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
           >
@@ -82,25 +90,25 @@ const Navbar: React.FC = () => {
         )}
         {isEducator && (
           <>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/teacher/classes"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               Classes
             </Button>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/teacher/assignments"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
               Assignments
             </Button>
-            <Button 
-              color="inherit" 
-              component={Link} 
+            <Button
+              color="inherit"
+              component={Link}
               to="/teacher/challenges"
               sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
             >
@@ -109,9 +117,9 @@ const Navbar: React.FC = () => {
           </>
         )}
         {isParent && (
-          <Button 
-            color="inherit" 
-            component={Link} 
+          <Button
+            color="inherit"
+            component={Link}
             to="/parent/manage-children"
             sx={{ borderRadius: 2, px: 2, "&:hover": { bgcolor: "rgba(255,255,255,0.1)" } }}
           >
@@ -119,12 +127,12 @@ const Navbar: React.FC = () => {
           </Button>
         )}
         {isChild && (
-          <Button 
-            color="inherit" 
-            onClick={() => auth.switchToParent()} 
-            sx={{ 
-              ml: "auto", 
-              borderRadius: 2, 
+          <Button
+            color="inherit"
+            onClick={() => auth.switchToParent()}
+            sx={{
+              ml: "auto",
+              borderRadius: 2,
               px: 2,
               bgcolor: "rgba(255,255,255,0.1)",
               "&:hover": { bgcolor: "rgba(255,255,255,0.2)" }
@@ -133,23 +141,23 @@ const Navbar: React.FC = () => {
             Back to Parent View
           </Button>
         )}
-        <Button 
-          color="inherit" 
-          onClick={toggleDarkMode} 
-          sx={{ 
-            marginLeft: isChild ? undefined : "auto", 
+        <Button
+          color="inherit"
+          onClick={toggleDarkMode}
+          sx={{
+            marginLeft: isChild ? undefined : "auto",
             borderRadius: 2,
             minWidth: 48,
             "&:hover": { bgcolor: "rgba(255,255,255,0.1)" }
-          }} 
+          }}
           title={isDark ? "Light mode" : "Dark mode"}
         >
           {isDark ? "☀️" : "🌙"}
         </Button>
-        <Button 
-          color="inherit" 
+        <Button
+          color="inherit"
           onClick={toggleLanguage}
-          sx={{ 
+          sx={{
             borderRadius: 2,
             fontWeight: 600,
             minWidth: 48,
@@ -159,11 +167,11 @@ const Navbar: React.FC = () => {
         >
           {i18n.language === "en" ? "AR" : "EN"}
         </Button>
-        <Button 
-          color="inherit" 
-          onClick={() => auth.logout()} 
-          sx={{ 
-            ml: 1, 
+        <Button
+          color="inherit"
+          onClick={() => auth.logout()}
+          sx={{
+            ml: 1,
             borderRadius: 2,
             px: 2,
             "&:hover": { bgcolor: "rgba(255,255,255,0.1)" }
