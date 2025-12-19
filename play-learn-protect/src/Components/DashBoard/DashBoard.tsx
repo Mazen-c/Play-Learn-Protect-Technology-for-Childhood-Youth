@@ -17,10 +17,15 @@ const Dashboard = () => {
   const { currentNotification, clearNotification, classLeaderboardPosition, leaderboardPosition } = useGame();
   const auth = useAuth();
   const navigate = useNavigate();
+  const isChild = auth.user?.role === "child";
 
   const handleLogout = () => {
-    auth.logout();
-    navigate("/login");
+    if (isChild) {
+      auth.switchToParent();
+    } else {
+      auth.logout();
+      navigate("/login");
+    }
   };
 
   return (
@@ -30,7 +35,7 @@ const Dashboard = () => {
           Your Dashboard
         </Typography>
         <Button color="secondary" variant="outlined" onClick={handleLogout}>
-          Log out
+          {isChild ? "Back to Parent" : "Log out"}
         </Button>
       </Box>
 

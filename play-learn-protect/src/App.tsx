@@ -12,23 +12,44 @@ import CreativeStudio from "./Pages/CreativeStudio";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
 import ForgotPassword from "./Pages/ForgotPassword";
-import ChildDashboard from "./Pages/ChildDashboard";
+import ParentClasses from "./Pages/Parent/ParentClasses";
+import ManageChildren from "./Pages/Parent/ManageChildren";
+import ParentDashboard from "./Pages/Parent/ParentDashboard";
+import ChildAssignments from "./Pages/Child/ChildAssignments";
+import ChildChallenges from "./Pages/Child/ChildChallenges";
 import { useAuth } from "./Components/Context/AuthContext";
+import { useTheme } from "./Components/Context/ThemeContext";
 import ResetPassword from "./Pages/ResetPassword";
 import "./i8ln/i8ln";
 
 const App: React.FC = () => {
   const auth = useAuth();
+  const { isDark } = useTheme();
 
   const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     if (!auth.user) return <Navigate to="/login" replace />;
     return <>{children}</>;
   };
 
+  const EducatorOnlyRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    if (!auth.user) return <Navigate to="/login" replace />;
+    const role = (auth.user.role as string) || "";
+    if (role !== "educator" && role !== "teacher") return <Navigate to="/" replace />;
+    return <>{children}</>;
+  };
+
+  const NonEducatorRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    if (!auth.user) return <Navigate to="/login" replace />;
+    const role = (auth.user.role as string) || "";
+    if (role === "educator" || role === "teacher") return <Navigate to="/" replace />;
+    return <>{children}</>;
+  };
+
   return (
-    <Router>
-      {auth.user && <Navbar />}
-      <Routes>
+    <div className={isDark ? "dark" : ""}>
+      <Router>
+        {auth.user && <Navbar />}
+        <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -38,16 +59,22 @@ const App: React.FC = () => {
           path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              {auth.user?.role === "child" ? (
+                <Dashboard />
+              ) : (auth.user?.role === "educator" || (auth.user as any)?.role === "teacher") ? (
+                <TeacherDashboard />
+              ) : (
+                <ParentDashboard />
+              )}
             </ProtectedRoute>
           }
         />
         <Route
           path="/game"
           element={
-            <ProtectedRoute>
+            <NonEducatorRoute>
               <Game />
-            </ProtectedRoute>
+            </NonEducatorRoute>
           }
         />
         <Route
@@ -61,53 +88,86 @@ const App: React.FC = () => {
         <Route
           path="/teacher/dashboard"
           element={
-            <ProtectedRoute>
+            <EducatorOnlyRoute>
               <TeacherDashboard />
-            </ProtectedRoute>
+            </EducatorOnlyRoute>
           }
         />
         <Route
           path="/teacher/classes"
           element={
-            <ProtectedRoute>
+            <EducatorOnlyRoute>
               <TeacherClassManagement />
-            </ProtectedRoute>
+            </EducatorOnlyRoute>
           }
         />
         <Route
           path="/teacher/assignments"
           element={
-            <ProtectedRoute>
+            <EducatorOnlyRoute>
               <TeacherAssignments />
-            </ProtectedRoute>
+            </EducatorOnlyRoute>
           }
         />
         <Route
           path="/teacher/challenges"
           element={
-            <ProtectedRoute>
+            <EducatorOnlyRoute>
               <TeacherChallenges />
-            </ProtectedRoute>
+            </EducatorOnlyRoute>
           }
         />
         <Route
           path="/teacher/students/:id"
           element={
-            <ProtectedRoute>
+            <EducatorOnlyRoute>
               <TeacherStudentDetail />
-            </ProtectedRoute>
+            </EducatorOnlyRoute>
           }
         />
         <Route
           path="/child/dashboard"
           element={
             <ProtectedRoute>
-              <ChildDashboard />
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parent/classes"
+          element={
+            <ProtectedRoute>
+              <ParentClasses />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/parent/manage-children"
+          element={
+            <ProtectedRoute>
+              <ManageChildren />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/child/assignments"
+          element={
+            <ProtectedRoute>
+              <ChildAssignments />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/child/challenges"
+          element={
+            <ProtectedRoute>
+              <ChildChallenges />
             </ProtectedRoute>
           }
         />
       </Routes>
     </Router>
+    </div>
   );
 };
 

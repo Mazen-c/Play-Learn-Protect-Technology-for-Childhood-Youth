@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { GameProvider } from './Components/Context/Context';
 import { AuthProvider } from './Components/Context/AuthContext';
+import { ThemeProvider } from './Components/Context/ThemeContext';
+import { ProjectsProvider } from './Components/Context/ProjectsContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -12,9 +14,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <GameProvider>
-        <App />
-      </GameProvider>
+      <ThemeProvider>
+        <ProjectsProvider>
+          <GameProvider>
+            <App />
+          </GameProvider>
+        </ProjectsProvider>
+      </ThemeProvider>
     </AuthProvider>
   </React.StrictMode>
 );

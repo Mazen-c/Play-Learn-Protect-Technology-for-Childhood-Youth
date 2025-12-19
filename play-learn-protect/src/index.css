@@ -9,9 +9,99 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  @apply bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Global dark-mode color tokens and overrides for consistent readable UI */
+:root {
+  --plp-bg: #ffffff;
+  --plp-card: #ffffff;
+  --plp-text: #0f172a; /* slate-900 */
+  --plp-muted: #6b7280; /* slate-500 */
+  --plp-border: #e5e7eb; /* slate-200 */
+  --plp-accent: #0ea5e9; /* sky-500 */
+}
+
+.dark, body.dark, html.dark {
+  --plp-bg: #0b1220; /* near slate-900 */
+  --plp-card: #0f172a; /* slate-900 */
+  --plp-text: #e6eef8; /* very light */
+  --plp-muted: #9ca3af; /* slate-400 */
+  --plp-border: #1f2937; /* slate-800 */
+  --plp-accent: #60a5fa; /* sky-400 */
+}
+
+/* Apply base background/text colors */
+body {
+  background-color: var(--plp-bg);
+  color: var(--plp-text);
+}
+
+/* Make common Tailwind utility colors map to readable dark variants when .dark is present */
+.dark .bg-white,
+.dark .bg-slate-50,
+.dark .bg-gray-100,
+.dark .bg-indigo-50 {
+  background-color: var(--plp-card) !important;
+}
+
+.dark .text-gray-900,
+.dark .text-slate-900,
+.dark .text-indigo-800 {
+  color: var(--plp-text) !important;
+}
+
+.dark .text-slate-500,
+.dark .text-gray-500,
+.dark .text-gray-600 {
+  color: var(--plp-muted) !important;
+}
+
+.dark .border-slate-200,
+.dark .border-gray-200,
+.dark .ring-slate-200 {
+  border-color: var(--plp-border) !important;
+}
+
+/* Form controls */
+.dark input,
+.dark select,
+.dark textarea,
+.dark button {
+  color: var(--plp-text) !important;
+  border-color: var(--plp-border) !important;
+  background-color: transparent !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(230,238,248,0.6) !important;
+}
+
+/* Make small utility cards slightly lighter/darker for separation */
+.dark .bg-yellow-100 { background-color: rgba(74, 43, 8, 0.18) !important; }
+.dark .bg-green-100 { background-color: rgba(4, 60, 14, 0.12) !important; }
+.dark .bg-blue-100  { background-color: rgba(2, 6, 23, 0.12) !important; }
+
+/* Ensure MUI AppBar/Toolbar readable in dark mode */
+.dark .MuiAppBar-root,
+.dark .MuiToolbar-root,
+.dark .MuiPaper-root {
+  background-color: var(--plp-card) !important;
+  color: var(--plp-text) !important;
+}
+
+/* Buttons with text colors default to accent where appropriate */
+.dark .text-indigo-700,
+.dark .text-indigo-600,
+.dark .text-sky-600 {
+  color: var(--plp-accent) !important;
+}
+
+/* Keep a smooth color transition */
+* { transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease; }

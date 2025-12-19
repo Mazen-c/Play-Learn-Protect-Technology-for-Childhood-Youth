@@ -23,7 +23,7 @@ const TeacherChallenges: React.FC = () => {
   };
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 px-4 py-6">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 px-4 py-6">
       <div className="mx-auto max-w-6xl space-y-6">
         <header className="space-y-1">
           <h1 className="text-2xl font-semibold text-slate-900">
@@ -35,7 +35,7 @@ const TeacherChallenges: React.FC = () => {
         </header>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
-          <section className="space-y-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <section className="space-y-4 rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <h2 className="text-sm font-semibold text-slate-900">
               New challenge
             </h2>
@@ -90,7 +90,7 @@ const TeacherChallenges: React.FC = () => {
             </button>
           </section>
 
-          <section className="space-y-4 rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <section className="space-y-4 rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <div className="flex items-center justify-between">
               <h2 className="text-sm font-semibold text-slate-900">
                 Live leaderboard

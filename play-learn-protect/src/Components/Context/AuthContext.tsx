@@ -5,12 +5,39 @@ type Role = "parent" | "child" | "educator";
 interface User {
   email: string;
   role: Role;
+  parentEmail?: string; // For child accounts, stores parent's email
 }
 
 interface Account {
   email: string;
   role: Exclude<Role, "child"> | "child";
   password: string;
+  parentEmail?: string; // For child accounts
+}
+
+interface ChildAccount {
+  name: string;
+  email: string;
+  parentEmail: string;
+}
+
+interface ModuleItem {
+  id: number;
+  title: string;
+  description: string;
+  createdBy: string; // teacher email
+  createdAt: number;
+}
+
+interface ChallengeItem {
+  id: number;
+  title: string;
+  description: string;
+  startDate?: string;
+  endDate?: string;
+  reward?: number;
+  createdBy: string;
+  createdAt: number;
 }
 
 interface ResetToken { token: string; email: string; expires: number }
@@ -22,6 +49,14 @@ interface AuthContextValue {
   register: (email: string, role: Exclude<Role, "child">, password: string) => Promise<void>;
   resetPassword: (email: string) => Promise<string>;
   completeReset: (token: string, newPassword: string) => Promise<void>;
+  createChildAccount: (childName: string, parentEmail: string) => Promise<void>;
+  getChildrenForParent: (parentEmail: string) => ChildAccount[];
+  loginAsChild: (childEmail: string, parentEmail: string) => Promise<void>;
+  switchToParent: () => void;
+  addModule: (module: Omit<ModuleItem, "id" | "createdAt">) => ModuleItem;
+  addChallenge: (ch: Omit<ChallengeItem, "id" | "createdAt">) => ChallengeItem;
+  getModules: () => ModuleItem[];
+  getChallenges: () => ChallengeItem[];
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -36,12 +71,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   });
 
+  const [parentSession, setParentSession] = useState<User | null>(() => {
+    try {
+      const raw = localStorage.getItem("plp_parent_session");
+      return raw ? JSON.parse(raw) as User : null;
+    } catch {
+      return null;
+    }
+  });
+
   useEffect(() => {
     if (user) localStorage.setItem("plp_user", JSON.stringify(user));
     else localStorage.removeItem("plp_user");
   }, [user]);
 
+  useEffect(() => {
+    if (parentSession) localStorage.setItem("plp_parent_session", JSON.stringify(parentSession));
+    else localStorage.removeItem("plp_parent_session");
+  }, [parentSession]);
+
   const fakeNetwork = (ms = 300) => new Promise(res => setTimeout(res, ms));
+
+  const getModules = (): ModuleItem[] => {
+    try {
+      const raw = localStorage.getItem("plp_modules");
+      return raw ? (JSON.parse(raw) as ModuleItem[]) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveModules = (modules: ModuleItem[]) => {
+    localStorage.setItem("plp_modules", JSON.stringify(modules));
+  };
+
+  const getChallenges = (): ChallengeItem[] => {
+    try {
+      const raw = localStorage.getItem("plp_challenges");
+      return raw ? (JSON.parse(raw) as ChallengeItem[]) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  const saveChallenges = (chs: ChallengeItem[]) => {
+    localStorage.setItem("plp_challenges", JSON.stringify(chs));
+  };
 
   const getAccounts = (): Account[] => {
     try {
@@ -122,8 +197,113 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     saveResetTokens(tokens.filter(t => t.token !== token));
   };
 
+  const createChildAccount = async (childName: string, parentEmail: string) => {
+    await fakeNetwork();
+    const accounts = getAccounts();
+    const parent = accounts.find(a => a.email.toLowerCase() === parentEmail.toLowerCase());
+    if (!parent) throw new Error("Parent account not found.");
+    if (parent.role !== "parent") throw new Error("Only parent accounts can create children.");
+    
+    // Generate child email
+    const childEmail = `${childName.toLowerCase().replace(/\s+/g, "")}_${Date.now()}@child.local`;
+    const childAccount: Account = {
+      email: childEmail,
+      role: "child",
+      password: "", // Children don't have their own password
+      parentEmail: parent.email,
+    };
+    accounts.push(childAccount);
+    saveAccounts(accounts);
+  };
+
+  const getChildrenForParent = (parentEmail: string): ChildAccount[] => {
+    const accounts = getAccounts();
+    return accounts
+      .filter(a => a.role === "child" && a.parentEmail?.toLowerCase() === parentEmail.toLowerCase())
+      .map(a => ({
+        name: a.email.split("_")[0].replace(/([A-Z])/g, " $1").trim(),
+        email: a.email,
+        parentEmail: a.parentEmail || "",
+      }));
+  };
+
+  const loginAsChild = async (childEmail: string, parentEmail: string) => {
+    await fakeNetwork();
+    const accounts = getAccounts();
+    const childAccount = accounts.find(a => 
+      a.email.toLowerCase() === childEmail.toLowerCase() && 
+      a.role === "child" &&
+      a.parentEmail?.toLowerCase() === parentEmail.toLowerCase()
+    );
+    if (!childAccount) throw new Error("Child account not found or not linked to this parent.");
+    
+    // Save parent session before switching to child
+    const parentUser: User = { email: parentEmail, role: "parent" };
+    setParentSession(parentUser);
+    
+    const u: User = {
+      email: childAccount.email,
+      role: "child",
+      parentEmail: childAccount.parentEmail,
+    };
+    setUser(u);
+  };
+
+  const switchToParent = () => {
+    if (parentSession) {
+      setUser(parentSession);
+      setParentSession(null);
+    }
+  };
+
+  const addModule = (module: Omit<ModuleItem, "id" | "createdAt">): ModuleItem => {
+    const modules = getModules();
+    const item: ModuleItem = {
+      id: Date.now(),
+      title: module.title,
+      description: module.description,
+      createdBy: module.createdBy,
+      createdAt: Date.now(),
+    };
+    modules.unshift(item);
+    saveModules(modules);
+    return item;
+  };
+
+  const addChallenge = (ch: Omit<ChallengeItem, "id" | "createdAt">): ChallengeItem => {
+    const chs = getChallenges();
+    const item: ChallengeItem = {
+      id: Date.now(),
+      title: ch.title,
+      description: ch.description,
+      startDate: ch.startDate,
+      endDate: ch.endDate,
+      reward: ch.reward,
+      createdBy: ch.createdBy,
+      createdAt: Date.now(),
+    };
+    chs.unshift(item);
+    saveChallenges(chs);
+    return item;
+  };
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, resetPassword, completeReset }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      login, 
+      logout, 
+      register, 
+      resetPassword, 
+      completeReset,
+      createChildAccount,
+      getChildrenForParent,
+      loginAsChild,
+      switchToParent,
+      addModule,
+      addChallenge,
+      getModules,
+      getChallenges,
+    }}>
       {children}
     </AuthContext.Provider>
   );

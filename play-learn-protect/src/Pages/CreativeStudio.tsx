@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Components/Context/AuthContext';
+import { useProjects } from '../Components/Context/ProjectsContext';
 
 // --- Inline SVG Icons to replace phosphor-react ---
 // These are simplified SVG equivalents to avoid adding new dependencies.
@@ -57,6 +60,12 @@ const Plus = ({ size = 24 }) => (
     </svg>
 );
 
+const X = ({ size = 24 }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} fill="currentColor" viewBox="0 0 256 256">
+        <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.32,61.66,205.66a8,8,0,0,1-11.32-11.32L116.68,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.68,194.34,50.34a8,8,0,0,1,11.32,11.32L139.32,128Z"></path>
+    </svg>
+);
+
 const House = ({ size = 24, weight = "regular" }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} fill="currentColor" viewBox="0 0 256 256">
         <path d="M213.38,118.62,133.38,42.47a8,8,0,0,0-10.76,0L42.62,118.62A8,8,0,0,0,48,132.31H56v83.69a16,16,0,0,0,16,16h48V176a8,8,0,0,1,8-8h0a8,8,0,0,1,8,8v56h48a16,16,0,0,0,16-16V132.31h8a8,8,0,0,0,5.38-13.69ZM184,216H152V176a24,24,0,0,0-48,0v40H72V132.31L128,79l56,53.33Z"></path>
@@ -92,7 +101,7 @@ const MOCK_TEACHERS: Teacher[] = [
 
 // 1. Project List Page
 // 1. Project List Page
-const ProjectList: React.FC<{ projects: Project[], onEdit: (p: Project) => void, onCreate: () => void }> = ({ projects, onEdit, onCreate }) => {
+const ProjectList: React.FC<{ projects: Project[], onEdit: (p: Project) => void, onCreate: () => void, onDelete: (id: string) => void }> = ({ projects, onEdit, onCreate, onDelete }) => {
     return (
         <div className="p-8 max-w-4xl mx-auto">
             <div className="flex justify-between items-center mb-8">
@@ -113,6 +122,13 @@ const ProjectList: React.FC<{ projects: Project[], onEdit: (p: Project) => void,
                                 Submitted
                             </div>
                         )}
+                        <button
+                            onClick={() => onDelete(String(project.id))}
+                            className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition"
+                            title="Delete project"
+                        >
+                            <X size={16} />
+                        </button>
                         <div className="h-32 bg-gray-100 rounded-xl mb-4 flex items-center justify-center text-gray-400">
                             {/* Thumbnail Placeholder */}
                             <Shapes size={48} />
@@ -182,36 +198,141 @@ const ToolButton = ({ icon, label, active, locked }: { icon: React.ReactNode, la
 // 3. Creative Workspace (Canvas & Toolbar)
 const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void, onBack: () => void }> = ({ project, onSave, onBack }) => {
     const [showShareModal, setShowShareModal] = useState(false);
+    const [projectTitle, setProjectTitle] = useState(project?.title || "New Masterpiece");
+    const [showNavMenu, setShowNavMenu] = useState(false);
+    const { saveProject } = useProjects();
+    const { user } = useAuth();
+    const navigate = useNavigate();
 
     // Mock handling for sharing
     const handleShare = (teacher: Teacher) => {
         alert(`Project sent to ${teacher.name}! You earned 20 Creativity Points!`); // Gamification feedback
-        setShowShareModal(false);
-        onSave(); // Save and exit
+        handleSave();
+    };
+
+    const handleSave = () => {
+        if (user?.email) {
+            saveProject({
+                id: String(project?.id || Date.now()),
+                title: projectTitle,
+                type: (project?.type as "Structure" | "Story" | "Drawing" | "Animation") || "Drawing",
+                userEmail: user.email,
+                date: new Date().toISOString().split('T')[0],
+                points: project?.points || 50,
+                status: "Draft",
+                content: "canvas-content" // In real app, serialize actual canvas
+            });
+            alert("Project saved successfully!");
+        }
+        onSave();
     };
 
     return (
-        <div className="h-screen flex flex-col bg-blue-50">
+        <div className="h-screen flex flex-col bg-blue-50 dark:bg-slate-900">
             {/* Top Navigation Bar */}
-            <div className="h-16 bg-white border-b-4 border-indigo-200 flex items-center justify-between px-6">
+            <div className="h-16 bg-white dark:bg-slate-800 border-b-4 border-indigo-200 flex items-center justify-between px-6">
                 <div className="flex items-center gap-4">
-                    <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full text-gray-600">
-                        <House size={28} weight="bold" />
-                    </button>
+                    <div className="relative">
+                        <button 
+                            onClick={() => setShowNavMenu(!showNavMenu)} 
+                            className="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition"
+                        >
+                            <House size={28} weight="bold" />
+                        </button>
+                        {showNavMenu && (
+                            <div className="absolute top-12 left-0 bg-white rounded-lg shadow-xl border-2 border-indigo-200 z-50 min-w-48">
+                                <button 
+                                    onClick={() => {
+                                        navigate('/');
+                                        setShowNavMenu(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700 rounded-t-lg"
+                                >
+                                    📊 Dashboard
+                                </button>
+                                {user?.role === 'child' && (
+                                    <>
+                                        <button 
+                                            onClick={() => {
+                                                navigate('/child/assignments');
+                                                setShowNavMenu(false);
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700"
+                                        >
+                                            📝 Assignments
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                navigate('/child/challenges');
+                                                setShowNavMenu(false);
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700"
+                                        >
+                                            🏆 Challenges
+                                        </button>
+                                    </>
+                                )}
+                                {user?.role === 'educator' && (
+                                    <>
+                                        <button 
+                                            onClick={() => {
+                                                navigate('/teacher');
+                                                setShowNavMenu(false);
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700"
+                                        >
+                                            👨‍🏫 Teacher Dashboard
+                                        </button>
+                                        <button 
+                                            onClick={() => {
+                                                navigate('/teacher/assignments');
+                                                setShowNavMenu(false);
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700"
+                                        >
+                                            📋 Assignments
+                                        </button>
+                                    </>
+                                )}
+                                <button 
+                                    onClick={() => {
+                                        navigate('/game');
+                                        setShowNavMenu(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700"
+                                >
+                                    🎮 Game
+                                </button>
+                                <button 
+                                    onClick={() => {
+                                        onBack();
+                                        setShowNavMenu(false);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-indigo-50 font-bold text-gray-700 rounded-b-lg border-t border-gray-200"
+                                >
+                                    ⬅️ Back to Projects
+                                </button>
+                            </div>
+                        )}
+                    </div>
                     <input
                         type="text"
-                        defaultValue={project?.title || "New Masterpiece"}
-                        className="text-2xl font-bold text-indigo-800 bg-transparent border-none focus:ring-0 font-comic"
+                        value={projectTitle}
+                        onChange={(e) => setProjectTitle(e.target.value)}
+                        className="text-2xl font-bold text-indigo-800 dark:text-indigo-300 bg-transparent border-none focus:ring-0 font-comic"
                     />
                 </div>
 
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 rounded-full font-bold shadow-sm hover:bg-yellow-300">
+                    <button 
+                        onClick={handleSave}
+                        className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 dark:text-yellow-200 rounded-full font-bold shadow-sm hover:bg-yellow-300 dark:bg-yellow-600 transition"
+                    >
                         <FloppyDisk size={20} /> Save
                     </button>
                     <button
                         onClick={() => setShowShareModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-full font-bold shadow-sm hover:bg-purple-600"
+                        className="flex items-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-full font-bold shadow-sm hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-500 transition"
                     >
                         <ShareNetwork size={20} /> Share
                     </button>
@@ -220,7 +341,7 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
 
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Toolbar (Tools) */}
-                <div className="w-24 bg-white border-r-4 border-indigo-200 flex flex-col items-center py-6 gap-4 shadow-inner z-10">
+                <div className="w-24 bg-white dark:bg-slate-800 border-r-4 border-indigo-200 flex flex-col items-center py-6 gap-4 shadow-inner z-10">
                     <ToolButton icon={<PaintBrush size={32} />} label="Draw" active />
                     <ToolButton icon={<Shapes size={32} />} label="Shapes" />
                     <ToolButton icon={<TextT size={32} />} label="Text" />
@@ -231,9 +352,9 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
                 </div>
 
                 {/* Center Canvas */}
-                <div className="flex-1 bg-gray-100 relative p-8 overflow-auto flex items-center justify-center">
-                    <div className="bg-white w-full h-full shadow-2xl rounded-xl border border-gray-300 relative">
-                        <div className="absolute inset-0 flex items-center justify-center text-gray-300 select-none pointer-events-none">
+                <div className="flex-1 bg-gray-100 dark:bg-slate-700 relative p-8 overflow-auto flex items-center justify-center">
+                    <div className="bg-white dark:bg-slate-800 w-full h-full shadow-2xl rounded-xl border border-gray-300 dark:border-slate-600 relative">
+                        <div className="absolute inset-0 flex items-center justify-center text-gray-300 dark:text-slate-400 select-none pointer-events-none">
                             <h2 className="text-4xl font-bold opacity-20">Canvas Area</h2>
                         </div>
                         {/* Mock Content */}
@@ -243,7 +364,7 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
                     </div>
 
                     {/* Floating Action Toolbar (Undo/Redo) */}
-                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white px-6 py-3 rounded-full shadow-xl flex gap-6 border-2 border-indigo-100">
+                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white dark:bg-slate-800 px-6 py-3 rounded-full shadow-xl flex gap-6 border-2 border-indigo-100">
                         <button className="text-gray-600 hover:text-indigo-600 hover:scale-110 transition">
                             <ArrowUUpLeft size={28} weight="bold" />
                         </button>
@@ -254,12 +375,12 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
                 </div>
 
                 {/* Right Sidebar (Properties/Layers - Simplified for Kids) */}
-                <div className="w-64 bg-white border-l-4 border-indigo-200 p-4">
-                    <h3 className="font-bold text-gray-700 mb-4">Stickers & Parts</h3>
+                <div className="w-64 bg-white dark:bg-slate-800 border-l-4 border-indigo-200 p-4">
+                    <h3 className="font-bold text-gray-700 dark:text-slate-100 mb-4">Stickers & Parts</h3>
                     <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-yellow-100 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-yellow-200">⭐ Star</div>
-                        <div className="bg-green-100 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-green-200">🌳 Tree</div>
-                        <div className="bg-blue-100 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-blue-200">🚙 Car</div>
+                        <div className="bg-yellow-100 dark:bg-yellow-900/20 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-yellow-200">⭐ Star</div>
+                        <div className="bg-green-100 dark:bg-green-900/20 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-green-200">🌳 Tree</div>
+                        <div className="bg-blue-100 dark:bg-blue-900/20 p-2 rounded-lg cursor-grab active:cursor-grabbing hover:bg-blue-200">🚙 Car</div>
                     </div>
                 </div>
             </div>
@@ -277,9 +398,14 @@ const CreativeWorkspace: React.FC<{ project: Project | null, onSave: () => void,
 const CreativeStudio = () => {
     const [view, setView] = useState<'list' | 'studio'>('list'); // 'list' or 'studio'
     const [currentProject, setCurrentProject] = useState<Project | null>(null);
+    const { user } = useAuth();
+    const { getUserProjects, deleteProject } = useProjects();
+
+    // Get user's projects or use mock data if no user email
+    const userProjects = user?.email ? getUserProjects(user.email) : MOCK_PROJECTS;
 
     const handleEdit = (project: Project) => {
-        setCurrentProject(project);
+        setCurrentProject(project as any);
         setView('studio');
     };
 
@@ -292,13 +418,20 @@ const CreativeStudio = () => {
         setView('list');
     };
 
+    const handleDelete = (projectId: string) => {
+        if (window.confirm('Are you sure you want to delete this project?')) {
+            deleteProject(projectId);
+        }
+    };
+
     return (
-        <div className="min-h-screen font-sans bg-gray-50 text-gray-900">
+        <div className="min-h-screen font-sans bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-slate-100">
             {view === 'list' ? (
                 <ProjectList
-                    projects={MOCK_PROJECTS}
+                    projects={userProjects as Project[]}
                     onEdit={handleEdit}
                     onCreate={handleCreate}
+                    onDelete={handleDelete}
                 />
             ) : (
                 <CreativeWorkspace

@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../Components/Context/AuthContext";
 import ProgressBar from "../Components/ProgressBar";
 import Leaderboard, {
   LeaderboardEntry,
@@ -16,9 +17,38 @@ const activeChallenges: LeaderboardEntry[] = [
 ];
 
 const TeacherDashboard: React.FC = () => {
+  const auth = useAuth();
+  const [modules, setModules] = useState<any[]>([]);
+  const [challenges, setChallenges] = useState<any[]>([]);
+
+  const [moduleTitle, setModuleTitle] = useState("");
+  const [moduleDesc, setModuleDesc] = useState("");
+
+  const [challengeTitle, setChallengeTitle] = useState("");
+  const [challengeDesc, setChallengeDesc] = useState("");
+
+  useEffect(() => {
+    setModules(auth.getModules());
+    setChallenges(auth.getChallenges());
+  }, [auth]);
+
+  const handleAddModule = () => {
+    if (!moduleTitle.trim()) return;
+    const item = auth.addModule({ title: moduleTitle.trim(), description: moduleDesc.trim(), createdBy: auth.user?.email || "" });
+    setModules(prev => [item, ...prev]);
+    setModuleTitle(""); setModuleDesc("");
+  };
+
+  const handleAddChallenge = () => {
+    if (!challengeTitle.trim()) return;
+    const item = auth.addChallenge({ title: challengeTitle.trim(), description: challengeDesc.trim(), createdBy: auth.user?.email || "" });
+    setChallenges(prev => [item, ...prev]);
+    setChallengeTitle(""); setChallengeDesc("");
+  };
+
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-slate-50 px-4 py-6">
-      <div className="mx-auto max-w-6xl space-y-6">
+    <div className="min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-900 px-4 py-6">
+      <div className="mx-auto max-w-6xl space-y-6 text-slate-900 dark:text-slate-100">
         <header className="space-y-1">
           <h1 className="text-2xl font-semibold text-slate-900">
             Teacher dashboard
@@ -29,13 +59,13 @@ const TeacherDashboard: React.FC = () => {
         </header>
 
         <section className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
               Total classes
             </p>
             <p className="mt-2 text-2xl font-semibold text-slate-900">2</p>
           </div>
-          <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
               Students
             </p>
@@ -55,25 +85,42 @@ const TeacherDashboard: React.FC = () => {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
+            <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-2">Create Learning Module</h2>
+            <input className="w-full mb-2 p-2 rounded border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100" placeholder="Module title" value={moduleTitle} onChange={e => setModuleTitle(e.target.value)} />
+            <textarea className="w-full mb-2 p-2 rounded border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100" placeholder="Short description" value={moduleDesc} onChange={e => setModuleDesc(e.target.value)} />
+            <div className="flex gap-2">
+              <button onClick={handleAddModule} className="rounded-md bg-sky-600 px-4 py-2 text-sm font-medium text-white">Add Module</button>
+              <button onClick={() => { setModuleTitle(""); setModuleDesc(""); }} className="rounded-md border px-4 py-2 text-sm">Clear</button>
+            </div>
+            {modules.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h3 className="text-xs font-semibold text-slate-700 dark:text-slate-200">Existing Modules</h3>
+                {modules.map(m => (
+                  <div key={m.id} className="p-2 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100">
+                    <div className="font-semibold">{m.title}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-300">{m.description}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <h2 className="text-sm font-semibold text-slate-900">
               Class completion
             </h2>
-            <p className="mb-4 text-xs text-slate-500">
+            <p className="mb-4 text-xs text-slate-500 dark:text-slate-300">
               Track overall module completion for each class.
             </p>
             <ul className="space-y-3">
               {classStats.map((cls) => (
-                <li
-                  key={cls.name}
-                  className="rounded-lg bg-slate-50 px-3 py-2 text-sm"
-                >
+                <li key={cls.name} className="rounded-lg bg-slate-50 dark:bg-slate-700 px-3 py-2 text-sm">
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium text-slate-900">
                         {cls.name}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-slate-500 dark:text-slate-300">
                         {cls.students} students
                       </p>
                     </div>
@@ -86,21 +133,29 @@ const TeacherDashboard: React.FC = () => {
             </ul>
           </div>
 
-          <div className="rounded-xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+          <div className="rounded-xl bg-white dark:bg-slate-800 p-4 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700">
             <div className="mb-2 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-slate-900">
-                Active challenges
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                Create Challenge
               </h2>
-              <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700">
-                Live
-              </span>
             </div>
-            <p className="mb-2 text-xs text-slate-500">
-              Top performing students across your current challenges.
-            </p>
-            <div className="rounded-lg border border-slate-100 bg-slate-50/80 p-2">
-              <Leaderboard data={activeChallenges} />
+            <input className="w-full mb-2 p-2 rounded border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100" placeholder="Challenge title" value={challengeTitle} onChange={e => setChallengeTitle(e.target.value)} />
+            <textarea className="w-full mb-2 p-2 rounded border border-slate-200 dark:border-slate-700 bg-transparent text-slate-900 dark:text-slate-100" placeholder="Short description" value={challengeDesc} onChange={e => setChallengeDesc(e.target.value)} />
+            <div className="flex gap-2">
+              <button onClick={handleAddChallenge} className="rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white">Add Challenge</button>
+              <button onClick={() => { setChallengeTitle(""); setChallengeDesc(""); }} className="rounded-md border px-4 py-2 text-sm">Clear</button>
             </div>
+            {challenges.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h3 className="text-xs font-semibold text-slate-700 dark:text-slate-200">Existing Challenges</h3>
+                {challenges.map(c => (
+                  <div key={c.id} className="p-2 rounded bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100">
+                    <div className="font-semibold">{c.title}</div>
+                    <div className="text-xs text-slate-600 dark:text-slate-300">{c.description}</div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>

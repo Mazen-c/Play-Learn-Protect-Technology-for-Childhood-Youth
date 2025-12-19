@@ -28,19 +28,19 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="w-full max-w-md bg-white p-8 rounded shadow">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+      <div className="w-full max-w-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-8 rounded shadow">
         <h2 className="text-2xl font-semibold mb-4">Sign in</h2>
         <form onSubmit={onSubmit}>
           <label className="block text-sm font-medium">Email</label>
-          <input value={email} onChange={e => setEmail(e.target.value)} className="w-full border p-2 rounded mb-3" placeholder="you@example.com" />
+          <input value={email} onChange={e => setEmail(e.target.value)} className="w-full border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-slate-100 p-2 rounded mb-3" placeholder="you@example.com" />
 
           <label className="block text-sm font-medium">Password</label>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full border p-2 rounded mb-3" placeholder="Enter password" />
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-slate-100 p-2 rounded mb-3" placeholder="Enter password" />
           {error && <div className="text-red-600 text-sm mb-2">{error}</div>}
 
           <label className="block text-sm font-medium">Role</label>
-          <select value={role} onChange={e => setRole(e.target.value)} className="w-full border p-2 rounded mb-4">
+          <select value={role} onChange={e => setRole(e.target.value)} className="w-full border border-slate-300 dark:border-slate-600 bg-transparent text-slate-900 dark:text-slate-100 p-2 rounded mb-4">
             <option value="parent">Parent</option>
             <option value="educator">Educator</option>
           </select>
